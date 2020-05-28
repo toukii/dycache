@@ -18,15 +18,7 @@ func WarpCache(cache *lru.Cache, f String2Int) *Bitmap {
 
 func (b *Bitmap) OnEvicted(key lru.Key, value interface{}) {
 	v := b.String2Int(fmt.Sprintf("%+v", key))
-	if b.Exist(v) {
-		b.Purge(v)
-		// l := b.cache.Len()
-		// b.best = (b.best*80 + b.size*20) / 100
-		// fmt.Printf("miss, cache-size:%d, miss-length:%d\n", l, b.size)
-		b.Summary(b.size)
-		return
-	}
-	b.Set(v)
+	b.ExistPurge(v)
 }
 
 type String2Int func(string) int

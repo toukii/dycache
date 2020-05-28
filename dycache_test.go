@@ -1,16 +1,19 @@
 package gcache
 
 import (
-	"fmt"
 	"math/rand"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/golang/groupcache/lru"
 )
 
+var lock sync.Mutex
+
 func setIfNotEx(cache *lru.Cache, key lru.Key, value interface{}) bool {
-	// fmt.Printf("%+v ", key)
+	lock.Lock()
+	defer lock.Unlock()
 	_, ex := cache.Get(key)
 	if ex {
 		return true
@@ -20,28 +23,14 @@ func setIfNotEx(cache *lru.Cache, key lru.Key, value interface{}) bool {
 }
 
 func TestOnEvicted(t *testing.T) {
-	cache := lru.New(80)
+	cache := lru.New(9)
 	b := WarpCache(cache, nil)
 	_ = b
-
-	for i := 0; i < 150; i++ {
-		cache.Add(i, i)
-		// fmt.Printf("%d ", i)
-	}
-	fmt.Println("=====")
 
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
 	hit := 0
-	for i := 0; i < 1500; i++ {
-		a := r.Intn(100)
-		if setIfNotEx(cache, a, i) {
-			hit++
-		}
-	}
-	t.Logf("hit:%d", hit)
-	hit = 0
-	for i := 0; i < 1500; i++ {
+	for i := 0; i < 3000000; i++ {
 		a := r.Intn(100)
 		if setIfNotEx(cache, a, i) {
 			hit++
