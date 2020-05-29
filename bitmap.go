@@ -2,11 +2,13 @@ package gcache
 
 import (
 	"fmt"
+
 	"github.com/golang/groupcache/lru"
+	// "github.com/willf/bitset"
 )
 
 const (
-	mask = 20140
+	mask = 10240
 )
 
 type Bitmap struct {
@@ -95,8 +97,8 @@ func (b *Bitmap) Summary(l int) {
 	// b.best = l
 	le, be := b.cache.Len(), b.size<<1
 	rate := float32(le) / float32(be)
-	if be > le {
-		// if be > le && be < le*11/10 {
+	// if be > le {
+	if be > le && be < le*11/10 {
 		// b.cache.MaxEntries = be
 	}
 	fmt.Printf("%d ==> %d (%.2f) %d\n", le, be, rate, b.best)
