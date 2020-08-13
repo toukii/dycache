@@ -2,12 +2,13 @@ package gcache
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/golang/groupcache/lru"
 )
 
-func WarpCache(cache *lru.Cache, f String2Int) *Bitmap {
-	b := new(Bitmap)
-	b.cache = cache
+func WarpCache(cache *lru.Cache, f String2Int, ex time.Duration) *Bitmap {
+	b := NewBitmap(cache, ex)
 	b.String2Int = f
 	if f == nil {
 		b.String2Int = s2i
